@@ -11,7 +11,7 @@
       ></sortCard>
     </div>
     <div class="control-panel">
-      <h1>Bubble Sort Visualizer</h1>
+      <h1>Sort Visualizer</h1>
       <button aria-label="Reset" v-if="store.state.sort.done" @click="reset(sort_array)">
         <i class="fa fa-refresh" aria-hidden="true"></i>
       </button>
@@ -23,7 +23,7 @@
 import sortCard from "../components/SortCard.vue";
 import store from "../store";
 
-const SORT_ARRAY = [16, 11, 4, 5, 5, 7];
+const SORT_ARRAY = [16, 11, 4, 5, 5, 7, 9, 2, 14, 10];
 const EVENT_DELAY = 200;
 
 export default {
@@ -43,7 +43,7 @@ export default {
       store.commit({ type: "reset", values: values });
 
       // 排序数组，返回一个包括每步的值 和 每步状态的数组
-      let sequence = this.bubbleSort(values);
+      let sequence = this.sort(values);
 
       // 遍历上边排序得到的数组，定时执行操作，实现动画效果
       sequence.forEach((event, index) => {
@@ -65,23 +65,19 @@ export default {
       do {
         swapped = false;
         for (let i = 0; i < indexLastUnsorted; i++) {
-          // card 是 state.cards 的一个成员
-          // 开始一次循环，就有两个card 的 isActive的值设置为true
           sequence.push({ type: "activate", indexes: [i, i + 1] });
 
-          // 如果前一个数 大于 后一个数，就交换两数
           if (values[i] > values[i + 1]) {
             let temp = values[i];
             values[i] = values[i + 1];
             values[i + 1] = temp;
             swapped = true;
-            // 满足交换的条件，就重新定义所有card的sortIndex属性
             sequence.push({ type: "swap", indexes: [i, i + 1] });
           }
-          // 结束这次循环之前，把原来两个card的isActive的值为true的，设置为false
+
           sequence.push({ type: "deactivate", indexes: [i, i + 1] });
         }
-        // 外层循环，每循环完一次，就锁定最后一个card，下次这个card 就不参与循环
+
         sequence.push({ type: "lock", indexes: [indexLastUnsorted] });
         indexLastUnsorted--;
       } while (swapped);
@@ -94,11 +90,184 @@ export default {
       console.log("包括每一步内容的数组", sequence);
       return sequence;
     },
+
+    //简单插入排序
+    insertionSort(values) {
+      let sequence = [];
+      sequence.push({ type: "lock", indexes: [0] });
+      for (let i = 1; i < values.length; i++) {
+        let p = i;
+        let j;
+        for (j = i - 1; j >= 0; j--) {
+          sequence.push({ type: "activate", indexes: [j, i] });
+          sequence.push({ type: "deactivate", indexes: [j, i] });
+          if (values[j] > values[i]) {
+            p = j;
+          } else {
+            break;
+          }
+        }
+        if (p < i) {
+          sequence.push({ type: "insert_to_front", indexes: [i, p] });
+          let t = values[i];
+          for (let j = i - 1; j >= p; j--) {
+            values[j + 1] = values[j];
+          }
+          values[p] = t;
+        }
+        sequence.push({ type: "lock", indexes: [p] });
+      }
+      sequence.push({ type: "done" });
+      return sequence;
+    },
+
+    //二分插入排序
+    binaryInsertionSort(values) {
+      let sequence = [];
+      sequence.push({ type: "lock", indexes: [0] });
+      for (let i = 1; i < values.length; i++) {
+        let l = 0,
+          r = i;
+        while (l < r) {
+          let mid = parseInt((l + r) / 2);
+          sequence.push({ type: "activate", indexes: [mid, i] });
+          sequence.push({ type: "deactivate", indexes: [mid, i] });
+          if (values[mid] < values[i]) {
+            l = mid + 1;
+          } else {
+            r = mid;
+          }
+        }
+        if (l < i) {
+          sequence.push({ type: "insert_to_front", indexes: [i, l] });
+          let t = values[i];
+          for (let j = i - 1; j >= l; j--) {
+            values[j + 1] = values[j];
+          }
+          values[l] = t;
+        }
+        sequence.push({ type: "lock", indexes: [l] });
+      }
+      sequence.push({ type: "done" });
+      return sequence;
+    },
+
+    //希尔排序
+    shellSort(values) {
+      let sequence = [];
+      let len = values.length;
+      //获取增量序列
+      let gap = 1;
+      while (gap < len / 3) {
+        gap = gap * 3 + 1;
+      }
+      //分组插入排序
+      while (gap > 1) {
+        for (let i = 0; i < len; i++) {
+          for (let j = i; j >= gap; j -= gap) {
+            sequence.push({ type: "activate", indexes: [j, j - gap] });
+            sequence.push({ type: "deactivate", indexes: [j, j - gap] });
+            if (values[j] < values[j - gap]) {
+              sequence.push({ type: "swap", indexes: [j, j - gap] });
+              let temp = values[j - gap];
+              values[j - gap] = values[j];
+              values[j] = temp;
+            } else {
+              break;
+            }
+          }
+        }
+        gap = (gap - 1) / 3;
+      }
+      //最后一趟，gap=1时等价于对整个数组插入排序，因此直接复用二分插入排序的代码
+      sequence = sequence.concat(this.binaryInsertionSort(values));
+      return sequence;
+    },
+
+    selectionSort(values) {
+      let sequence = [];
+      for (let i = 0; i < values.length - 1; i++) {
+        let minPos = i;
+        for (let j = i + 1; j < values.length; j++) {
+          sequence.push({ type: "activate", indexes: [minPos, j] });
+          if (values[j] < values[minPos]) {
+            sequence.push({ type: "deactivate", indexes: [minPos] });
+            minPos = j;
+          } else {
+            sequence.push({ type: "deactivate", indexes: [j] });
+          }
+        }
+        sequence.push({ type: "deactivate", indexes: [minPos] });
+        if (minPos != i) {
+          sequence.push({ type: "swap", indexes: [i, minPos] });
+          let tmp = values[i];
+          values[i] = values[minPos];
+          values[minPos] = tmp;
+        }
+        sequence.push({ type: "lock", indexes: [i] });
+      }
+      sequence.push({ type: "lock", indexes: [values.length - 1] });
+      sequence.push({ type: "done" });
+      return sequence;
+    },
+
+    quickSort(values) {
+      let sequence = [];
+      quickSortRecursive(0, values.length);
+      console.log(values);
+      sequence.push({ type: "done" });
+      return sequence;
+
+      function quickSortRecursive(begin, end) {
+        if (end - begin <= 1) {
+          if (begin < values.length) {
+            sequence.push({ type: "lock", indexes: [begin] });
+          }
+          return;
+        }
+        let pivot = values[begin];
+        let i = begin;
+        let j = end - 1;
+        while (i < j) {
+          while (i < j) {
+            sequence.push({ type: "activate", indexes: [begin, j] });
+            sequence.push({ type: "deactivate", indexes: [begin, j] });
+            if (values[j] >= pivot) {
+              j--;
+            } else {
+              break;
+            }
+          }
+          while (i < j) {
+            sequence.push({ type: "activate", indexes: [begin, i] });
+            sequence.push({ type: "deactivate", indexes: [begin, i] });
+            if (values[i] <= pivot) {
+              i++;
+            } else {
+              break;
+            }
+          }
+          if (i < j) {
+            sequence.push({ type: "swap", indexes: [i, j] });
+            let t = values[i];
+            values[i] = values[j];
+            values[j] = t;
+          }
+        }
+        sequence.push({ type: "swap", indexes: [begin, i] });
+        values[begin] = values[i];
+        values[i] = pivot;
+        sequence.push({ type: "lock", indexes: [i] });
+        quickSortRecursive(begin, i);
+        quickSortRecursive(i + 1, end);
+      }
+    },
   },
   data: function () {
     return {
       store: store,
-      sort_array: SORT_ARRAY
+      sort_array: SORT_ARRAY,
+      sort: this.quickSort,
     };
   },
 };
@@ -106,12 +275,14 @@ export default {
 
 <style lang="scss" scoped>
 $transition-time: 200ms;
-$easing: cubic-bezier(0.175, 0.885, 0.320, 1.275);
+$easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-@import url('https://fonts.googleapis.com/css?family=Titillium+Web:700');
-@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+@import url("https://fonts.googleapis.com/css?family=Titillium+Web:700");
+@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -150,13 +321,20 @@ button {
 }
 
 @media only screen and (min-width: 880px) {
-  #sort { width: 800px; }
-  .value { font-size: 1.5rem; }
+  #sort {
+    width: 800px;
+  }
+  .value {
+    font-size: 1.5rem;
+  }
 }
 
 @media only screen and (min-width: 1084px) {
-  #sort { width: 1024px; }
-  .value { font-size: 1.75rem; }
+  #sort {
+    width: 1024px;
+  }
+  .value {
+    font-size: 1.75rem;
+  }
 }
-
 </style>

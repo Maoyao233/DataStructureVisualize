@@ -20,13 +20,13 @@ export default {
     value: Number,
     sortIndex: Number,
     isActive: Boolean,
-    isLocked: Boolean,
+    isLocked: Boolean
   },
   computed: {
     cardClassObject() {
       return {
         "card-active": this.isActive,
-        "card-locked": this.isLocked,
+        "card-locked": this.isLocked && !this.isActive,
       };
     },
   },
