@@ -1,4 +1,4 @@
-# exercise
+# Data Structure Visualize
 
 ## Project setup
 ```

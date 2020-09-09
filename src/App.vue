@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
+      <router-link to="/">Home</router-link> | 
+      <router-link to="/sort">Sort</router-link> | 
       <router-link to="/about">About</router-link>
     </div>
     <router-view/>
@@ -18,7 +19,7 @@
 }
 
 #nav {
-  padding: 30px;
+  padding: 20px;
 }
 
 #nav a {
@@ -28,5 +29,15 @@
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+html {
+  font: 700 16px/1 'Titillium Web', sans-serif;
+}
+
+body {
+  margin: 40px 0;
+  color: #2c3e50;
+  background-color: #fff;
 }
 </style>
