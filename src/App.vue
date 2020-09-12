@@ -26,7 +26,6 @@ export default {
   margin-top: 60px;
 }
 
-
 #nav {
   padding: 20px;
 }

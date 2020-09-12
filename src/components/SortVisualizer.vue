@@ -12,10 +12,15 @@
     </div>
     <div class="control-panel">
       <h1>Sort Visualizer</h1>
+      <div style="display:none"> {{ percentage}} </div>
       <el-button-group>
+        <el-tooltip content="暂停/继续">
         <el-button v-if="paused" id="play_button" icon="el-icon-video-play" round @click="play()"></el-button>
         <el-button v-else id="pause_button" icon="el-icon-video-pause" round @click="pause()"></el-button>
+        </el-tooltip>
+        <el-tooltip content="重置">
         <el-button id="reset_button" icon="el-icon-refresh" round @click="reset()"></el-button>
+        </el-tooltip>
       </el-button-group>
     </div>
   </div>
@@ -37,15 +42,23 @@ export default {
     sequence: function () {
       return this.sortFunc(this.sortArray.slice());
     },
+    percentage: function () {
+      let percentage = parseInt((this.curStep / this.sequence.length) * 100);
+      if (isNaN(percentage)) {
+        percentage = 0;
+      }
+      this.$emit("percentagechange", percentage);
+      return percentage;
+    },
   },
   watch: {
     sequence: function () {
       this.$message({
-        message:"设置成功",
-        type:"success"
+        message: "设置成功",
+        type: "success",
       });
       this.reset();
-    }
+    },
   },
   methods: {
     // 重置
@@ -81,8 +94,8 @@ export default {
       if (this.curStep == 0) {
         this.$message({
           message: "开始演示",
-          type: "success"
-        })
+          type: "success",
+        });
       } else {
         this.$message({
           message: "继续",
@@ -162,6 +175,10 @@ $easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border-top: 2px solid #2c3e50;
 }
 
+.el-button-group {
+  margin-right: 10%;
+}
+
 h1 {
   margin: 0;
   font-size: 2.5rem;
@@ -170,27 +187,9 @@ h1 {
 button {
   appearance: none;
   background: none;
-  border: none;
+  border-color: #42b983;
   color: #42b983;
   font-size: 1.5rem;
   cursor: pointer;
-}
-
-@media only screen and (min-width: 880px) {
-  #sort {
-    width: 800px;
-  }
-  .value {
-    font-size: 1.5rem;
-  }
-}
-
-@media only screen and (min-width: 1084px) {
-  #sort {
-    width: 1024px;
-  }
-  .value {
-    font-size: 1.75rem;
-  }
 }
 </style>

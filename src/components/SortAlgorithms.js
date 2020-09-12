@@ -1,7 +1,6 @@
 // 冒泡排序方法，返回包括每一步的数组
 function bubbleSort(values) {
 
-    this.algoName="冒泡排序";
     // sequence 为包括每一步内容的数组
     let sequence = [];
     // swapped 为判断是否已经排序好的 标志位
@@ -38,7 +37,6 @@ function bubbleSort(values) {
 
 //简单插入排序
 function insertionSort(values) {
-    this.algoName="直接插入排序";
 
     let sequence = [];
     sequence.push({ type: "lock", indexes: [0] });
@@ -69,7 +67,6 @@ function insertionSort(values) {
 
 //二分插入排序
 function binaryInsertionSort(values) {
-    this.algoName="折半插入排序";
 
     let sequence = [];
     sequence.push({ type: "lock", indexes: [0] });
@@ -101,7 +98,6 @@ function binaryInsertionSort(values) {
 
 //希尔排序
 function shellSort(values) {
-    this.algoName="希尔排序";
 
     let sequence = [];
     let len = values.length;
@@ -134,7 +130,7 @@ function shellSort(values) {
 }
 
 function selectionSort(values) {
-    this.algoName="插入排序";
+
 
     let sequence = [];
     for (let i = 0; i < values.length - 1; i++) {
