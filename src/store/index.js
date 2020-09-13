@@ -15,7 +15,7 @@ const sortModule = {
   mutations: {
     setSortArray(state, payload) {
       state.sortArray = payload.values.slice();
-      this.commit({type:"reset"});
+      this.commit({ type: "reset" });
     },
     // 重置
     reset(state) {
@@ -94,23 +94,79 @@ const sortModule = {
         let u = state.values[index].cardIndex;
         state.cards[u].isLocked = true;
       });
+    }
+  }
+}
+
+const JosephusModule = {
+  namespaced: true,
+  state: {
+    players: [],
+    deadOrder: []
+  },
+  mutations: {
+    setPlayers(state, payload) {
+      state.players = new Array(payload.n);
+      for (let i = 0; i < payload.n; i++) {
+        state.players[i] = {
+          number: i + 1,
+          isKilled: false,
+          isActive: false,
+          isDanger: false
+        }
+      }
+      state.deadOrder = [];
+    },
+    // 重置
+    reset(state) {
+      for (let i = 0; i < state.players.length; i++) {
+        state.players[i] = {
+          number: i + 1,
+          isKilled: false,
+          isActive: false,
+          isDanger: false
+        }
+      }
+      state.deadOrder = [];
     },
 
-    // 完成
-    done(state) {
-      state.done = true;
+    // 激活 
+    activate(state, payload) {
+      payload.indexes.forEach((index) => {
+        state.players[index].isActive = true;
+      });
+    },
+
+    //  释放 
+    deactivate(state, payload) {
+      payload.indexes.forEach((index) => {
+        state.players[index].isActive = false;
+      });
+    },
+
+    // 准备移出游戏
+    danger(state, payload) {
+      payload.indexes.forEach((index) => {
+        state.players[index].isDanger = true;
+      });
+    },
+
+    // 移出游戏
+    kill(state, payload) {
+      payload.indexes.forEach((index) => {
+
+        if (!state.players[index].isKilled) {
+          state.deadOrder.push(index + 1);
+        }
+        state.players[index].isKilled = true;
+      });
     }
   }
 }
 
 export default new Vuex.Store({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
   modules: {
-    sort: sortModule
+    sort: sortModule,
+    Josephus: JosephusModule
   }
 })

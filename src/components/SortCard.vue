@@ -2,7 +2,7 @@
   <div
     class="card-wrapper"
     :data-sort-index="sortIndex"
-    v-bind:style="{height: value * 15 + 'px',transform: 'translateX('+sortIndex*100+'%)'}"
+    v-bind:style="{height: value * 15 + 'px',transform: 'translateX('+(sortIndex+1)*100+'%)'}"
   >
     <div class="card" :class="cardClassObject">
       <div class="value">{{value}}</div>
@@ -36,9 +36,6 @@ export default {
 $transition-time: 500ms;
 $easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-@import url("https://fonts.googleapis.com/css?family=Titillium+Web:700");
-@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
-
 *,
 *::before,
 *::after {
@@ -57,7 +54,7 @@ $easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   height: 100%;
   margin: 0 5px;
   background-color: #839af6;
- // box-shadow: 0 0 25px #1405e2bb;
+  box-shadow: 0 0 25px #1405e21b;
 }
 
 .card-active {

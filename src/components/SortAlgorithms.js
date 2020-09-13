@@ -37,7 +37,6 @@ function bubbleSort(values) {
 
 //简单插入排序
 function insertionSort(values) {
-
     let sequence = [];
     sequence.push({ type: "lock", indexes: [0] });
     for (let i = 1; i < values.length; i++) {

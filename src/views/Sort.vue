@@ -20,7 +20,7 @@
           :max="1000"
           :min="100"
         ></el-slider>
-        <el-button slot="reference" type="primary" round v-on:click="setEventDelay()">动画速度</el-button>
+        <el-button slot="reference" type="primary" round>动画速度</el-button>
       </el-popover>
       <el-progress type="circle" :percentage="percentage"></el-progress>
     </el-aside>

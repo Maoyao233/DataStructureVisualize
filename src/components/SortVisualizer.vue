@@ -12,7 +12,7 @@
     </div>
     <div class="control-panel">
       <h1>Sort Visualizer</h1>
-      <div style="display:none"> {{ percentage}} </div>
+      <div style="display:none"> {{ percentage }} </div>
       <el-button-group>
         <el-tooltip content="暂停/继续">
         <el-button v-if="paused" id="play_button" icon="el-icon-video-play" round @click="play()"></el-button>
@@ -146,9 +146,6 @@ export default {
 <style lang="scss" scoped>
 $transition-time: 200ms;
 $easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-@import url("https://fonts.googleapis.com/css?family=Titillium+Web:700");
-@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
 
 *,
 *::before,
